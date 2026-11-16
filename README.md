@@ -1,1 +1,100 @@
-# solitaire-game
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071f1b">
+<meta name="description" content="Play Modern Solitaire, a relaxing classic Klondike card game. Free to play on mobile and desktop.">
+<title>Modern Solitaire — Free Klondike Card Game</title>
+<style>
+:root{color-scheme:dark;--bg:#071f1b;--felt:#0b4c3b;--felt2:#0d6148;--panel:#102b26;--line:#ffffff1c;--gold:#f6cf76;--ink:#14211d;--muted:#a9c6bc;--cardW:clamp(43px,10.6vw,76px);--cardH:calc(var(--cardW)*1.43);--red:#d83d50}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(ellipse at 50% -15%,#174c40 0,#0a2b25 48%,var(--bg) 100%);color:#f5faf7}body{min-height:100vh;overscroll-behavior:none}button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.app{max-width:1050px;margin:auto;padding:env(safe-area-inset-top) 12px calc(20px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 2px 12px}.brand{display:flex;align-items:center;gap:10px}.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#f9df9a,#c99b45);color:#17382d;font-size:22px;box-shadow:0 5px 18px #0004}.brand h1{font-size:clamp(17px,4vw,22px);margin:0;letter-spacing:-.5px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}.head-actions{display:flex;gap:7px}.icon-btn,.pill-btn{border:1px solid var(--line);background:#ffffff0b;color:#edf8f3;border-radius:11px;min-height:38px;padding:8px 11px}.icon-btn{width:40px;padding:0;font-size:17px}.pill-btn{font-size:12px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 14px}.stat{background:linear-gradient(145deg,#ffffff0e,#ffffff06);border:1px solid var(--line);border-radius:13px;padding:9px 12px;min-width:0}.stat span{display:block;color:var(--muted);font-size:9px;letter-spacing:1.2px;font-weight:800}.stat strong{display:block;font-size:19px;font-variant-numeric:tabular-nums;margin-top:2px}
+.game-shell{border:1px solid #ffffff1b;border-radius:20px;padding:clamp(9px,2vw,18px);background:linear-gradient(145deg,#ffffff0a,#ffffff03);box-shadow:0 22px 60px #0003}
+.board{background:radial-gradient(ellipse at 50% 20%,var(--felt2),var(--felt) 72%);border:1px solid #ffffff24;border-radius:15px;padding:12px 8px 20px;min-height:440px;box-shadow:inset 0 1px #ffffff12;overflow:hidden}
+.toprow,.tableau{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(4px,1.2vw,11px)}.toprow{margin-bottom:16px}.slot{width:100%;height:var(--cardH);border:1.5px dashed #d6f3e16e;border-radius:8px;position:relative;display:flex;align-items:center;justify-content:center}.slot .mark{font-size:clamp(17px,4.5vw,28px);opacity:.44}.slot.stock{border-style:solid;border-color:#ffffff32;background:#ffffff0a}.spacer{pointer-events:none}
+.card{position:absolute;inset:0;width:100%;height:var(--cardH);border-radius:7px;background:linear-gradient(145deg,#fff,#f3f4f0);color:#18211e;border:1px solid #d8ddd9;box-shadow:0 3px 7px #001b1480;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab;overflow:hidden}.card.red{color:var(--red)}.card.back{background:repeating-linear-gradient(45deg,#173d75 0 5px,#e7edf7 5px 7px,#173d75 7px 12px);border:3px solid #f4f5f2;cursor:pointer}.card.back:after{content:"✦";position:absolute;inset:5px;border:1px solid #ffffff8c;border-radius:4px;display:grid;place-items:center;color:#fff9;font-size:22px}.corner{position:absolute;top:4px;left:5px;font-weight:850;font-size:clamp(10px,2.4vw,15px);line-height:1.02;text-align:center}.corner .suit{font-size:.9em}.corner.bottom{left:auto;top:auto;right:5px;bottom:4px;transform:rotate(180deg)}.pip{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(19px,4.9vw,32px)}.card.selected{outline:3px solid var(--gold);outline-offset:1px;z-index:90!important;box-shadow:0 0 0 5px #f6cf7633,0 8px 16px #001b1499}.card.dragging{opacity:.82;z-index:200!important;transform:scale(1.04)}
+.pile{position:relative;min-height:var(--cardH);height:calc(var(--cardH) + 250px);border-radius:8px}.pile .card{position:absolute}.pile.drop-target,.slot.drop-target{outline:2px solid var(--gold);outline-offset:2px}
+.controls{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:14px 0 3px}.action{border:1px solid #ffffff22;background:#ffffff0d;color:#f4faf7;border-radius:12px;padding:10px 13px;font-size:12px;font-weight:750;min-height:40px}.action.primary{background:linear-gradient(135deg,#f7dda0,#e8bd61);color:#26372f;border:0;box-shadow:0 4px 14px #0003}.action:disabled{opacity:.38;cursor:not-allowed}.message{text-align:center;color:#e9d8a9;font-size:12px;min-height:24px;padding:8px 4px 0}
+.ad-slot{margin:14px auto 0;min-height:54px;border:1px dashed #ffffff27;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;color:#91ada3;font-size:10px;letter-spacing:.7px;background:#ffffff04}.ad-slot small{display:block;font-size:9px;opacity:.7;margin-top:3px}.footer{display:flex;justify-content:space-between;gap:10px;color:#8eaaa0;font-size:10px;padding:14px 4px 0}.footer a{color:#c7d9d1;text-decoration:none}
+.overlay{position:fixed;inset:0;background:#020d0bd9;display:none;align-items:center;justify-content:center;padding:20px;z-index:500;backdrop-filter:blur(8px)}.dialog{width:min(370px,100%);border:1px solid #ffffff22;border-radius:20px;background:linear-gradient(145deg,#173b32,#0c211d);box-shadow:0 25px 80px #0009;padding:24px;text-align:center}.dialog h2{margin:0 0 7px;font-size:24px}.dialog p{color:#b7cec4;font-size:13px;line-height:1.5}.dialog .dialog-actions{display:flex;justify-content:center;gap:8px;margin-top:17px}.dialog .action{min-width:105px}.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,18px);opacity:0;pointer-events:none;background:#f5dfa7;color:#25372f;padding:10px 16px;border-radius:999px;font-size:12px;font-weight:800;transition:.22s;z-index:600;box-shadow:0 8px 30px #0005}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:760px){:root{--cardW:76px}.app{padding-top:20px}.board{padding:18px 20px 24px}.pile{height:390px}.toprow{margin-bottom:20px}}
+@media(max-width:390px){.app{padding-left:7px;padding-right:7px}.board{padding:9px 5px 16px}.toprow,.tableau{gap:3px}.stats{gap:5px}.stat{padding:8px}.action{padding:9px 10px}.brand small{font-size:9px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">♠</div><div><h1>Modern Solitaire</h1><small>Classic Klondike · Free to play</small></div></div>
+ <div class="head-actions"><button class="pill-btn" id="drawMode" aria-label="Change draw mode">DRAW 1</button><button class="icon-btn" id="soundBtn" aria-label="Toggle sound">♫</button><button class="icon-btn" id="helpBtn" aria-label="How to play">?</button></div>
+</header>
+<section class="stats" aria-label="Game statistics">
+ <div class="stat"><span>TIME</span><strong id="time">00:00</strong></div><div class="stat"><span>SCORE</span><strong id="score">0</strong></div><div class="stat"><span>MOVES</span><strong id="moves">0</strong></div>
+</section>
+<section class="game-shell">
+ <div class="board" id="board">
+  <div class="toprow">
+   <div class="slot stock" id="stock" aria-label="Draw pile"></div><div class="slot" id="waste" aria-label="Waste pile"></div><div class="spacer"></div>
+   <div class="slot foundation" data-suit="♠" aria-label="Spades foundation"><span class="mark">♠</span></div>
+   <div class="slot foundation" data-suit="♥" aria-label="Hearts foundation"><span class="mark">♥</span></div>
+   <div class="slot foundation" data-suit="♣" aria-label="Clubs foundation"><span class="mark">♣</span></div>
+   <div class="slot foundation" data-suit="♦" aria-label="Diamonds foundation"><span class="mark">♦</span></div>
+  </div>
+  <div class="tableau">
+   <div class="pile" data-pile="0"></div><div class="pile" data-pile="1"></div><div class="pile" data-pile="2"></div><div class="pile" data-pile="3"></div><div class="pile" data-pile="4"></div><div class="pile" data-pile="5"></div><div class="pile" data-pile="6"></div>
+  </div>
+ </div>
+ <div class="controls">
+  <button class="action primary" id="newGame">＋ New Game</button><button class="action" id="undo">↶ Undo</button><button class="action" id="hint">✧ Hint</button><button class="action" id="auto">⇧ Auto</button>
+ </div>
+ <div class="message" id="message" role="status" aria-live="polite">Tap the deck to draw. Build down in alternating colors.</div>
+</section>
+<div class="ad-slot" id="adSlot"><div>ADVERTISEMENT AREA<small>Ad network integration placeholder · No ad is currently served</small></div></div>
+<footer class="footer"><span>© <span id="year"></span> Modern Solitaire</span><span><a href="#privacy" id="privacyLink">Privacy</a> · <a href="#rules" id="rulesLink">How to play</a></span></footer>
+</div>
+<div class="overlay" id="modal"><div class="dialog"><h2 id="modalTitle">You won!</h2><p id="modalText"></p><div class="dialog-actions"><button class="action" id="closeModal">Close</button><button class="action primary" id="modalNew">New Game</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(()=>{'use strict';
+const SUITS=['♠','♥','♣','♦'],RED=['♥','♦'],RANK=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const $=id=>document.getElementById(id);
+let stock=[],waste=[],foundations={'♠':[],'♥':[],'♣':[],'♦':[]},tableau=Array.from({length:7},()=>[]);
+let score=0,moves=0,seconds=0,drawCount=1,history=[],selected=null,timer=null,soundOn=false,gameOver=false,toastTimer=null,drag=null;
+const isRed=s=>RED.includes(s), rank=r=>RANK[r];
+const clone=o=>JSON.parse(JSON.stringify(o));
+function say(t){$('message').textContent=t}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1600)}
+function saveHistory(){history.push(clone({stock,waste,foundations,tableau,score,moves}));if(history.length>80)history.shift()}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function makeDeck(){return shuffle(SUITS.flatMap(s=>Array.from({length:13},(_,i)=>({s,r:i+1,up:false,id:s+(i+1)}))))}
+function startGame(){clearInterval(timer);stock=[];waste=[];foundations={'♠':[],'♥':[],'♣':[],'♦':[]};tableau=Array.from({length:7},()=>[]);let deck=makeDeck();for(let col=0;col<7;col++){for(let n=0;n<=col;n++){let c=deck.pop();c.up=n===col;tableau[col].push(c)}}stock=deck;score=0;moves=0;seconds=0;history=[];selected=null;gameOver=false;$('modal').style.display='none';$('time').textContent='00:00';timer=setInterval(()=>{if(!gameOver){seconds++;$('time').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}},1000);render();say('A fresh deal is ready. Good luck!')}
+function cardNode(c,source,index){const el=document.createElement('div');el.className='card '+(!c.up?'back':(isRed(c.s)?'red':''));el.dataset.source=source;el.dataset.index=index;el.setAttribute('aria-label',c.up?rank(c.r)+' of '+c.s:'Face down card');if(c.up){el.innerHTML=`<div class="corner">${rank(c.r)}<br><span class="suit">${c.s}</span></div><div class="pip">${c.s}</div><div class="corner bottom">${rank(c.r)}<br><span class="suit">${c.s}</span></div>`;if(selected&&selected.source===source&&selected.index===index)el.classList.add('selected');el.addEventListener('click',e=>{e.stopPropagation();choose(source,index)});el.addEventListener('pointerdown',e=>pointerStart(e,source,index))}return el}
+function render(){ $('score').textContent=score;$('moves').textContent=moves;
+ const st=$('stock');st.innerHTML='';if(stock.length){const back=document.createElement('div');back.className='card back';st.appendChild(back)}else{const m=document.createElement('span');m.className='mark';m.textContent=waste.length?'↻':'✓';st.appendChild(m)}st.onclick=drawCards;
+ const ws=$('waste');ws.innerHTML='';if(waste.length)ws.appendChild(cardNode(waste[waste.length-1],'waste',waste.length-1));
+ document.querySelectorAll('.foundation').forEach(el=>{const s=el.dataset.suit,a=foundations[s];el.innerHTML='';if(a.length)el.appendChild(cardNode(a[a.length-1],'foundation:'+s,a.length-1));else{const m=document.createElement('span');m.className='mark';m.textContent=s;el.appendChild(m)}el.onclick=()=>tryFoundation(s)});
+ document.querySelectorAll('.pile').forEach((el,i)=>{el.innerHTML='';tableau[i].forEach((c,j)=>{const node=cardNode(c,'tableau:'+i,j);node.style.top=(j*(c.up?Math.max(19,Math.min(25,window.innerWidth*.055)):11))+'px';el.appendChild(node)});el.onclick=e=>{if(e.target===el)tryTableau(i)}});
+ $('undo').disabled=!history.length;$('auto').disabled=!hasAnyFoundationMove();if(Object.values(foundations).every(a=>a.length===13))win()}
+function drawCards(){if(gameOver)return;saveHistory();selected=null;if(stock.length){for(let n=0;n<Math.min(drawCount,stock.length);n++){const c=stock.pop();c.up=true;waste.push(c)}}else if(waste.length){stock=waste.reverse().map(c=>({...c,up:false}));waste=[];score=Math.max(0,score-20)}else{history.pop();say('No cards left to draw.');return}moves++;render();say(stock.length?'Card drawn.':'Deck recycled.')}
+function choose(source,index){const p=getPile(source);if(!p||!p[index]||!p[index].up)return;if(selected&&source.startsWith('tableau:')&&selected.source!==source){tryTableau(+source.split(':')[1]);return}if(selected&&selected.source===source&&selected.index===index){selected=null;render();return}selected={source,index};render()}
+function getPile(source){if(source==='waste')return waste;if(source.startsWith('tableau:'))return tableau[+source.split(':')[1]];if(source.startsWith('foundation:'))return foundations[source.split(':')[1]];return null}
+function selectedCards(){if(!selected)return null;const p=getPile(selected.source);return p?p.slice(selected.index):null}
+function removeSelected(){const {source,index}=selected;let p=getPile(source),removed=p.splice(index);if(source.startsWith('tableau:')&&p.length&&!p[p.length-1].up){p[p.length-1].up=true;score+=5}if(source.startsWith('foundation:'))score=Math.max(0,score-15);return removed}
+function canStack(cards,dest){if(!cards||!cards.length||!cards[0].up)return false;const c=cards[0],top=dest[dest.length-1];return !top?c.r===13:top.up&&top.r===c.r+1&&isRed(top.s)!==isRed(c.s)}
+function tryTableau(col){if(!selected)return;const cards=selectedCards();if(selected.source==='tableau:'+col)return;if(!canStack(cards,tableau[col])){say('Move not allowed. Alternate colors and count down.');return}saveHistory();tableau[col].push(...removeSelected());moves++;score+=5;selected=null;render();say('Great move!')}
+function tryFoundation(s){if(!selected)return;const cards=selectedCards();if(!cards||cards.length!==1){say('Only one card can move to a foundation.');return}const c=cards[0],a=foundations[s];if(c.s!==s||c.r!==a.length+1){say('Foundations build Ace to King in the same suit.');return}saveHistory();a.push(...removeSelected());moves++;score+=10;selected=null;render();say('Card placed in foundation.')}
+function hasAnyFoundationMove(){const candidates=[];for(let i=0;i<7;i++){const p=tableau[i];if(p.length)candidates.push(p[p.length-1])}if(waste.length)candidates.push(waste[waste.length-1]);return candidates.some(c=>c&&c.up&&c.r===foundations[c.s].length+1)}
+function hint(){if(selected){selected=null;render()}for(let i=0;i<7;i++){const p=tableau[i];for(let j=0;j<p.length;j++){if(!p[j].up)continue;const cards=p.slice(j);for(let k=0;k<7;k++)if(k!==i&&canStack(cards,tableau[k])){selected={source:'tableau:'+i,index:j};render();say('Hint: move the highlighted stack to another column.');return}}}const candidates=[];if(waste.length)candidates.push(['waste',waste.length-1,waste[waste.length-1]]);for(let i=0;i<7;i++)if(tableau[i].length)candidates.push(['tableau:'+i,tableau[i].length-1,tableau[i].at(-1)]);for(const [src,idx,c] of candidates){if(c.up&&c.r===foundations[c.s].length+1){selected={source:src,index:idx};render();say('Hint: move the highlighted card to its foundation.');return}}if(stock.length||waste.length){say('Hint: draw a card or uncover a face-down card.');toast('Try drawing from the deck')}else{say('No obvious moves. Undo or start a new game.')}}
+function autoFinish(){if(!hasAnyFoundationMove()){toast('No automatic moves available');return}let changed=true,steps=0;while(changed&&steps<52){changed=false;const list=[];if(waste.length)list.push(['waste',waste.length-1,waste.at(-1)]);for(let i=0;i<7;i++)if(tableau[i].length)list.push(['tableau:'+i,tableau[i].length-1,tableau[i].at(-1)]);for(const [src,idx,c] of list){if(c&&c.up&&c.r===foundations[c.s].length+1){saveHistory();selected={source:src,index:idx};foundations[c.s].push(...removeSelected());moves++;score+=10;selected=null;changed=true;steps++;break}}}render();say('Safe cards moved to foundations.')}
+function undo(){if(!history.length){toast('Nothing to undo');return}const s=history.pop();({stock,waste,foundations,tableau,score,moves}=s);selected=null;render();say('Last move undone.')}
+function win(){if(gameOver)return;gameOver=true;clearInterval(timer);const best=Number(localStorage.getItem('ms_best')||0);if(score>best)localStorage.setItem('ms_best',String(score));$('modalTitle').textContent='You did it! ✨';$('modalText').textContent=`All 52 cards are home. Final score: ${score} · Time: ${$('time').textContent} · Moves: ${moves}.`; $('modal').style.display='flex'}
+function pointerStart(e,source,index){if(!e.isPrimary)return;drag={x:e.clientX,y:e.clientY,source,index,el:e.currentTarget,active:false};e.currentTarget.setPointerCapture?.(e.pointerId);e.currentTarget.addEventListener('pointerup',pointerEnd,{once:true});e.currentTarget.addEventListener('pointercancel',()=>{drag=null},{once:true})}
+function pointerEnd(e){if(!drag)return;const d=drag;drag=null;const dist=Math.abs(e.clientX-d.x)+Math.abs(e.clientY-d.y);if(dist<12)return;const target=document.elementFromPoint(e.clientX,e.clientY);const pile=target?.closest('.pile'),foundation=target?.closest('.foundation');selected={source:d.source,index:d.index};if(pile)tryTableau(+pile.dataset.pile);else if(foundation)tryFoundation(foundation.dataset.suit);else{selected=null;render()}}
+function showModal(title,body){$('modalTitle').textContent=title;$('modalText').textContent=body;$('modal').style.display='flex'}
+$('newGame').onclick=startGame;$('undo').onclick=undo;$('hint').onclick=hint;$('auto').onclick=autoFinish;$('drawMode').onclick=()=>{drawCount=drawCount===1?3:1;$('drawMode').textContent='DRAW '+drawCount;toast('Draw '+drawCount+' mode')};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♪';toast(soundOn?'Sound enabled':'Sound muted')};$('helpBtn').onclick=()=>showModal('How to play','Build the seven columns down in alternating red and black. Move each suit from Ace to King into its foundation. Tap the deck to draw cards. Tap a card, then a destination, or drag it. Use Undo to take back a move.');$('rulesLink').onclick=e=>{e.preventDefault();$('helpBtn').click()};$('privacyLink').onclick=e=>{e.preventDefault();showModal('Privacy','This standalone demo stores no personal information and uses local browser storage only for the current game session in this version. Before adding analytics or advertising, publish a full privacy notice and obtain any consent required for your audience and region.')};$('closeModal').onclick=()=>$('modal').style.display='none';$('modalNew').onclick=startGame;$('year').textContent=new Date().getFullYear();
+window.addEventListener('resize',()=>render());startGame();
+})();
+</script>
+</body></html>
